@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: granth-portal
+    runtime: docker
+    plan: starter            # persistent disks need a paid plan
+    healthCheckPath: /healthz
+    disk:
+      name: granth-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      - key: SESSION_SECRET
+        generateValue: true

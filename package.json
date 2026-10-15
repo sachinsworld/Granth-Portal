@@ -1,0 +1,11 @@
+{
+  "name": "granth-portal",
+  "version": "1.1.0",
+  "description": "Student and admin portal for monthly current-affairs practice (UPSC / UPPSC)",
+  "main": "server.js",
+  "scripts": { "start": "node --disable-warning=ExperimentalWarning server.js" },
+  "optionalDependencies": { "mongodb": "^6.8.0" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED",
+  "private": true
+}
