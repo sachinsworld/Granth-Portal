@@ -95,7 +95,7 @@ const okPath=p=>typeof p=='string'&&/^[A-Za-z0-9_\-\/]{3,200}$/.test(p)&&!p.incl
 /* ---------- http ---------- */
 const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8'};
 const SEC={'X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'same-origin','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-ancestors 'none'"};
-const send=(res,code,obj,extra)=>{const b=JSON.stringify(obj);res.writeHead(code,{'Content-Type':'application/json','Cache-Control':'no-store',...SEC,...(extra||{})});res.end(b)};
+const send=(res,code,obj,extra)=>{let b=Buffer.from(JSON.stringify(obj));const h={'Content-Type':'application/json','Cache-Control':'no-store',...SEC,...(extra||{})};if(b.length>2048&&/gzip/.test((res.req&&res.req.headers['accept-encoding'])||'')){b=zlib.gzipSync(b);h['Content-Encoding']='gzip'}h['Content-Length']=b.length;res.writeHead(code,h);res.end(b)};
 const err=(res,code,msg)=>send(res,code,{error:msg});
 function body(req,max=8e6){return new Promise((ok,no)=>{let n=0;const c=[];req.on('data',d=>{n+=d.length;if(n>max){no(Object.assign(new Error('too_large'),{code:413}));req.destroy()}else c.push(d)});req.on('end',()=>{try{ok(c.length?JSON.parse(Buffer.concat(c).toString()):{})}catch(e){no(Object.assign(new Error('bad_json'),{code:400}))}});req.on('error',no)})}
 const gz=new Map();

@@ -4,14 +4,35 @@ A complete, self-hosted portal for monthly current-affairs practice (UPSC / UPPS
 It has **real accounts** (email + password), a **student portal**, an **admin portal**, and a **database** (SQLite).
 No npm install needed: it has zero dependencies.
 
-## What you get
+## How the system is organised
 
-**Students:** sign up (name, email, password, roll number, batch), sign in/out, dashboard, timed practice from 893 hand-written
-questions (Jan–Sep 2026), assigned tests, mistake notebook, question bank, flag bad questions, profile and password change.
+There are **three kinds of practice sections**:
 
-**Admins:** first-run setup, approve / reject / revoke students, make other admins, reset passwords, delete accounts,
-overview analytics, per-student results (CSV export), edit / hide / add questions, build and publish timed tests,
-announcements, add new months from a PDF or text, database page (tables, settings, audit log), full backup and restore.
+1. **Current Affairs (month-wise):** the built-in January–September 2026 questions. They are not tagged by subject or exam.
+2. **Subject-wise:** subjects such as Polity, History, Geography, Economy. Students pick one or several and practise.
+3. **Exam-wise:** an exam (UPSC, UPPSC, SSC...) is made of subjects. Students open an exam, see its subjects and take a full mock test.
+
+The Subject-wise and Exam-wise sections start **empty**. You fill them from the admin portal.
+
+### Setting it up (admin portal)
+1. **Exams & Subjects:** edit the starter lists (add, rename, delete). Choose which subjects belong to each exam and set each exam's mock-test length and minutes.
+2. **Add questions:** pick a **subject**, tick the **exam(s)** the questions help with, optionally a topic and default level. Then add questions:
+   * one at a time with the form (with an optional explanation shown after the test), or
+   * many at once by pasting text, or uploading a **PDF / TXT / JSON / CSV** file. A CSV template can be downloaded from the page
+     (columns: `question,a,b,c,d,answer,level,explanation,topic`).
+3. **Manage questions:** search, edit (text, options, answer, level, topic, exam tags), hide or delete any question.
+4. **Tests:** publish a timed test to students built from current-affairs months, chosen subjects, or an exam (mixed evenly across the exam's subjects).
+
+A question tagged with an exam appears in that exam's section **and** in its subject. A question with no exam tag appears only in Subject-wise.
+
+### Students get
+Dashboard with accuracy by month, by subject and exam readiness; Current Affairs, Subject-wise and Exam-wise practice with timer, negative marking and mock tests;
+assigned tests; a mistake notebook; question bank; flagging; profile and password change.
+
+### Admins get
+First-run setup; approve / reject / revoke students; make other admins; reset passwords; overview analytics by month, subject and exam;
+per-student results (CSV); Exams & Subjects manager; question adding and editing; test builder; announcements; add new current-affairs months from a PDF;
+database page (tables, settings, audit log); full backup and restore.
 
 ## 1. Run it on your own computer (2 minutes)
 
@@ -109,5 +130,6 @@ See `.env.example`. The important ones: `DATA_DIR` (persistent folder), `SESSION
 * Capacity: one small server comfortably handles hundreds of students; SQLite is fine at this scale.
 * Importing a PDF as a new month uses a PDF reader loaded from the internet (cdnjs), so the *browser* needs a connection. Scanned PDFs do not work.
 * Auto-generated questions from imported PDFs are lower quality than the hand-written ones; review them.
-* To update the questions, replace `public/index.html` with a new build (ask for one) and restart. Your database is untouched.
+* Questions you add through the admin portal live in the database, so they survive restarts and updates.
+* To change the app itself, replace `public/index.html` (and `server.js` if told to) and restart. Your database is untouched.
 * Health check URL: `/healthz`.
