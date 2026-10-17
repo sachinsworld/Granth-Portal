@@ -1,3 +1,25 @@
+# Granth Portal: Student + Admin Web App (Render + MongoDB Edition)
+
+This package is pre-configured for **free-tier cloud deployment on Render** backed by **MongoDB Atlas** (no paid persistent disk required), while preserving all built-in UPSC / UPPSC Current Affairs questions (Jan–Sept 2026), student/admin portals, test builder, and local SQLite/JSON fallback.
+
+## Quick Deploy to Render + MongoDB Atlas
+
+### Step 1: Set up MongoDB Atlas (Free Tier)
+1. Sign in at [mongodb.com/atlas](https://www.mongodb.com/cloud/atlas) and create a **Free (M0)** cluster.
+2. Go to **Database Access** → **Add New Database User** and create a username and password (avoid special characters like `@`, `:`, `/` in the password, or URL-encode them).
+3. Go to **Network Access** → **Add IP Address** → select **Allow Access from Anywhere (`0.0.0.0/0`)** so Render can connect.
+4. Click **Connect** → **Drivers** and copy your connection string:
+   `mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority`
+
+### Step 2: Deploy on Render
+1. Push this project folder to a GitHub or GitLab repository.
+2. In your Render Dashboard, click **New +** → **Blueprint** and connect your repository.
+3. Render will automatically read `render.yaml` and prompt you to paste your **`MONGODB_URI`**.
+4. Click **Apply**. Render will run `npm install` (installing the official `mongodb` driver) and start the server (`database: mongodb`).
+5. Visit your Render URL to create your administrator account on first launch!
+
+---
+
 # Granth Portal: student + admin web app
 
 A complete, self-hosted portal for monthly current-affairs practice (UPSC / UPPSC).

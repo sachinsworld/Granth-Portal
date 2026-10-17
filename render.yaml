@@ -1,15 +1,17 @@
 services:
   - type: web
     name: granth-portal
-    runtime: docker
-    plan: starter            # persistent disks need a paid plan
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
     healthCheckPath: /healthz
-    disk:
-      name: granth-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
-      - key: DATA_DIR
-        value: /data
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: granth
       - key: SESSION_SECRET
         generateValue: true

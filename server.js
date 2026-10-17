@@ -1,6 +1,7 @@
 'use strict';
-/* Granth Portal server: zero dependencies. Needs Node 18+ (Node 22+ recommended for built-in SQLite). */
+/* Granth Portal server: configured for Render + MongoDB Atlas (with SQLite/JSON local fallback). */
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto'),zlib=require('zlib'),{promisify}=require('util');
+try{const envFile=path.join(__dirname,'.env');if(fs.existsSync(envFile)){fs.readFileSync(envFile,'utf8').split(/\r?\n/).forEach(l=>{const m=l.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);if(m&&!process.env[m[1]])process.env[m[1]]=m[2].replace(/^['"]|['"]$/g,'')})}}catch(e){}
 const scrypt=promisify(crypto.scrypt);
 const PORT=+process.env.PORT||3000,DATA=process.env.DATA_DIR||path.join(__dirname,'data'),PUB=path.join(__dirname,'public');
 fs.mkdirSync(DATA,{recursive:true});
@@ -155,6 +156,6 @@ function dailyBackup(){if(ST.kind==='mongodb')return;try{const d=path.join(DATA,
  try{ST=await openStore()}catch(e){console.error('Could not open the database:',e.message);process.exit(1)}
  if(!(await ST.users()).length&&process.env.ADMIN_EMAIL&&process.env.ADMIN_PASSWORD){try{const a=await createUser({name:process.env.ADMIN_NAME||'Administrator',email:process.env.ADMIN_EMAIL,password:process.env.ADMIN_PASSWORD,role:'admin'});await ST.setDoc('signups/'+a.id,{name:a.name,email:a.email,roll:'',batch:'',phone:'',t:Date.now()});console.log('Admin account created for',a.email)}catch(e){console.error('ADMIN_EMAIL setup failed:',e.message)}}
  setTimeout(dailyBackup,5000);setInterval(dailyBackup,6*36e5);
- server.listen(PORT,()=>console.log(`Granth Portal running on http://localhost:${PORT} (database: ${ST.kind})`));
+ server.listen(PORT,'0.0.0.0',()=>console.log(`Granth Portal running on http://0.0.0.0:${PORT} (database: ${ST.kind})`));
 })();
 process.on('SIGTERM',()=>server.close(()=>process.exit(0)));
